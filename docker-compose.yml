@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5433:5433"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: abcd123
+      POSTGRES_DB: info_db
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  rust_app:
+    image: axumcrud:latest
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://postgres:abcd123@postgres:5432/info_db"
+      SQLX_CONNECT_TIMEOUT: "30"
+    depends_on:
+      - postgres
